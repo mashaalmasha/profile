@@ -26,20 +26,6 @@ export async function POST(request: Request) {
     console.log('Starting Fal.ai request with style:', style);
     console.log('Image data length:', image.length);
     
-    // Step 1: Convert base64 to blob and upload to get URL
-    const base64Data = image.split(',')[1];
-    const mimeType = image.match(/data:(.*);base64,/)?.[1] || 'image/png';
-    
-    // Convert base64 to buffer
-    const buffer = Buffer.from(base64Data, 'base64');
-    
-    // Upload the image to get a URL
-    const uploadResult = await fal.storage.upload(buffer, {
-      contentType: mimeType,
-    });
-    
-    console.log('Image uploaded to:', uploadResult);
-    
     // Create simple, natural language instructions for HiDream-E1-1
     const styleInstructions = {
       ghibli: `Convert this image into Studio Ghibli animation style`,
@@ -49,10 +35,10 @@ export async function POST(request: Request) {
     const selectedInstruction = styleInstructions[style.toLowerCase() as keyof typeof styleInstructions] || 
       `Convert this image into ${style.toLowerCase()} style`;
 
-    // Step 2: Use HiDream-E1-1 for instruction-based style transformation
+    // Use HiDream-E1-1 with direct base64 input
     const result = await fal.subscribe('fal-ai/hidream-e1-1', {
       input: {
-        image_url: uploadResult,
+        image_url: image, // Direct base64 data URI
         edit_instruction: selectedInstruction,
         negative_prompt: "low resolution, blur, distorted face",
         num_inference_steps: 50,
