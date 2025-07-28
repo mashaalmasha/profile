@@ -8,18 +8,74 @@ interface StyleSelectorProps {
 export default function StyleSelector({ selectedStyle, onStyleChange }: StyleSelectorProps) {
   const styles = [
     {
-      id: 'Ghibli',
+      id: 'studio-ghibli',
       name: 'Studio Ghibli',
       description: 'Magical anime-inspired artwork',
       icon: '🎨',
       gradient: 'from-green-400 to-blue-500'
     },
     {
-      id: 'Mosaic',
-      name: 'Mosaic Art',
-      description: 'Classical tile-based patterns',
-      icon: '🧩',
-      gradient: 'from-purple-400 to-pink-500'
+      id: 'van-gogh',
+      name: 'Van Gogh Starry Night',
+      description: 'Swirling impressionist masterpiece',
+      icon: '🌌',
+      gradient: 'from-blue-600 to-yellow-400'
+    },
+    {
+      id: 'professional',
+      name: 'Professional Photo',
+      description: 'Enhanced portrait photography',
+      icon: '📸',
+      gradient: 'from-gray-600 to-gray-400'
+    },
+    {
+      id: 'cartoon',
+      name: 'Cartoonify',
+      description: 'Fun animated cartoon style',
+      icon: '🎭',
+      gradient: 'from-orange-400 to-red-500'
+    },
+    {
+      id: 'plushie',
+      name: 'Plushie',
+      description: 'Cute stuffed toy appearance',
+      icon: '🧸',
+      gradient: 'from-pink-400 to-purple-500'
+    },
+    {
+      id: 'old-version',
+      name: 'Old Version',
+      description: 'Age progression transformation',
+      icon: '👴',
+      gradient: 'from-amber-600 to-orange-500'
+    },
+    {
+      id: 'baby-version',
+      name: 'Baby Version',
+      description: 'Youthful baby-like features',
+      icon: '👶',
+      gradient: 'from-cyan-400 to-blue-400'
+    },
+    {
+      id: 'realism',
+      name: 'Realism',
+      description: 'Photorealistic enhancement',
+      icon: '🖼️',
+      gradient: 'from-emerald-500 to-teal-500'
+    },
+    {
+      id: 'pixel-studio',
+      name: 'Pixel Studio',
+      description: 'Retro pixelated art style',
+      icon: '🎮',
+      gradient: 'from-purple-600 to-indigo-500'
+    },
+    {
+      id: '3d-animated',
+      name: '3D Animated Style',
+      description: 'Modern 3D animation look',
+      icon: '🎬',
+      gradient: 'from-violet-500 to-purple-600'
     }
   ];
 

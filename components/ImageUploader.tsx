@@ -10,16 +10,62 @@ export default function ImageUploader({ onImageUpload }: ImageUploaderProps) {
   const [image, setImage] = useState<string | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const compressImage = (file: File): Promise<string> => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d')!;
+      const img = new Image();
+      
+      img.onload = () => {
+        // Calculate new dimensions (max 1024px on the longer side)
+        const maxSize = 1024;
+        let { width, height } = img;
+        
+        if (width > height) {
+          if (width > maxSize) {
+            height = (height * maxSize) / width;
+            width = maxSize;
+          }
+        } else {
+          if (height > maxSize) {
+            width = (width * maxSize) / height;
+            height = maxSize;
+          }
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        
+        // Draw and compress
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        // Convert to base64 with compression (0.8 quality for JPEG)
+        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+        resolve(compressedDataUrl);
+      };
+      
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const imageData = reader.result as string;
-        setImage(imageData);
-        onImageUpload(imageData);
-      };
-      reader.readAsDataURL(file);
+      try {
+        const compressedImage = await compressImage(file);
+        setImage(compressedImage);
+        onImageUpload(compressedImage);
+      } catch (error) {
+        console.error('Error compressing image:', error);
+        // Fallback to original method
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const imageData = reader.result as string;
+          setImage(imageData);
+          onImageUpload(imageData);
+        };
+        reader.readAsDataURL(file);
+      }
     }
   };
 
@@ -33,18 +79,26 @@ export default function ImageUploader({ onImageUpload }: ImageUploaderProps) {
     setIsDragOver(false);
   };
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragOver(false);
     const file = e.dataTransfer.files[0];
     if (file && file.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const imageData = reader.result as string;
-        setImage(imageData);
-        onImageUpload(imageData);
-      };
-      reader.readAsDataURL(file);
+      try {
+        const compressedImage = await compressImage(file);
+        setImage(compressedImage);
+        onImageUpload(compressedImage);
+      } catch (error) {
+        console.error('Error compressing image:', error);
+        // Fallback to original method
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const imageData = reader.result as string;
+          setImage(imageData);
+          onImageUpload(imageData);
+        };
+        reader.readAsDataURL(file);
+      }
     }
   };
 

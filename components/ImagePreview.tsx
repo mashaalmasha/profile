@@ -7,12 +7,31 @@ interface ImagePreviewProps {
 }
 
 export default function ImagePreview({ image, transformedImage, onClear }: ImagePreviewProps) {
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (transformedImage) {
-      const a = document.createElement('a');
-      a.href = transformedImage;
-      a.download = 'ai-artwork.png';
-      a.click();
+      try {
+        // Fetch the image as blob to bypass CORS issues
+        const response = await fetch(transformedImage);
+        const blob = await response.blob();
+        
+        // Create a blob URL
+        const blobUrl = window.URL.createObjectURL(blob);
+        
+        // Create and trigger download
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = `ai-artwork-${Date.now()}.jpg`;
+        document.body.appendChild(a);
+        a.click();
+        
+        // Clean up
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(blobUrl);
+      } catch (error) {
+        console.error('Download failed:', error);
+        // Fallback to opening in new tab if download fails
+        window.open(transformedImage, '_blank');
+      }
     }
   };
 
